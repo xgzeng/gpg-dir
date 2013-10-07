@@ -24,6 +24,8 @@ def gpg_decrypt_file(src_file, dst_file, keyid):
 
 def gpg_dir(src_dir, dst_dir, keyid, decrypt, stat):
     for dirpath, _, filenames in os.walk(src_dir):
+        if os.path.samefile(dirpath, dst_dir):
+            continue
         for src_fname in filenames:
             if decrypt and not src_fname.endswith(".gpg"):
                 continue
@@ -69,6 +71,8 @@ def main():
     if os.path.exists(args.dst_dir):
       print("directory '%s' already exists" % args.dst_dir)
       return
+    else:
+      os.makedirs(args.dst_dir)
     stat = Statics()
     gpg_dir(args.src_dir, args.dst_dir, args.recipient, args.decrypt, stat)
     print("there are %d files, %d successed, %d failed"
